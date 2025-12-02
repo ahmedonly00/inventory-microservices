@@ -65,11 +65,6 @@ public class Transfers {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medication_id", nullable = false)
     private Medications medication;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "requested_by", nullable = false)
-    private Users requestedBy;
-
 
     @PrePersist
     protected void onCreate() {

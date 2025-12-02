@@ -1,12 +1,12 @@
-package com.inventory.pharmacyInventory.mapper;
+package com.pharmacyInventory.inventory.mapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.inventory.pharmacyInventory.dtos.Brands.BrandsDTO;
-import com.inventory.pharmacyInventory.model.Brands;
+import com.pharmacyInventory.inventory.dtos.Brands.BrandsDTO;
+import com.pharmacyInventory.inventory.model.Brands;
 
 @Component
 public class BrandMapper {

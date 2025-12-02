@@ -72,13 +72,13 @@ public class EquivalentsService {
         existing.setSource(equivalentDTO.getSource());
 
         // Update medications if changed
-        if (!equivalentDTO.getOriginalMedicationId().equals(existing.getOriginalMedication().getId())) {
+        if (!equivalentDTO.getOriginalMedicationId().equals(existing.getOriginalMedication().getMedicationId())) {
             Medications originalMedication = medicationsRepository.findById(equivalentDTO.getOriginalMedicationId())
                     .orElseThrow(() -> new RuntimeException("Original medication not found with id: " + equivalentDTO.getOriginalMedicationId()));
             existing.setOriginalMedication(originalMedication);
         }
 
-        if (!equivalentDTO.getEquivalentMedicationId().equals(existing.getEquivalentMedication().getId())) {
+        if (!equivalentDTO.getEquivalentMedicationId().equals(existing.getEquivalentMedication().getMedicationId())) {
             Medications equivalentMedication = medicationsRepository.findById(equivalentDTO.getEquivalentMedicationId())
                     .orElseThrow(() -> new RuntimeException("Equivalent medication not found with id: " + equivalentDTO.getEquivalentMedicationId()));
             existing.setEquivalentMedication(equivalentMedication);

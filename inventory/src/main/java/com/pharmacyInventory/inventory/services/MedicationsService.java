@@ -56,7 +56,7 @@ public class MedicationsService {
         medication.setIsActive(true);
 
         Medications saved = medicationsRepository.save(medication);
-        log.info("Created medication with id: {}", saved.getId());
+        log.info("Created medication with id: {}", saved.getMedicationId());
         return medicationsMapper.toMedicationsDTO(saved);
     }
 

@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import feign.RequestInterceptor;
-import feign.Response;
 import feign.codec.ErrorDecoder;
 
 @Configuration

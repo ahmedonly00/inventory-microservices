@@ -1,9 +1,9 @@
-package com.inventory.pharmacyInventory.mapper;
+package com.pharmacyInventory.inventory.mapper;
 
-import com.inventory.pharmacyInventory.dtos.medications.MedicationsDTO;
-import com.inventory.pharmacyInventory.model.Medications;
-import com.inventory.pharmacyInventory.model.Categories;
-import com.inventory.pharmacyInventory.repository.CategoriesRepository;
+import com.pharmacyInventory.inventory.dtos.medications.MedicationsDTO;
+import com.pharmacyInventory.inventory.model.Medications;
+import com.pharmacyInventory.inventory.model.Categories;
+import com.pharmacyInventory.inventory.repository.CategoriesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,8 +45,6 @@ public class MedicationsMapper {
                 .isActive(medication.getIsActive())
                 .createdAt(medication.getCreatedAt())
                 .updatedAt(medication.getUpdatedAt())
-                .addedById(medication.getAddedBy() != null ? medication.getAddedBy().getId() : null)
-                .addedByName(medication.getAddedBy() != null ? medication.getAddedBy().getName() : null)
                 .categoryId(medication.getCategory() != null ? medication.getCategory().getId() : null)
                 .categoryName(medication.getCategory() != null ? medication.getCategory().getName() : null)
                 .supplierId(medication.getSuppliers() != null ? medication.getSuppliers().getId() : null)

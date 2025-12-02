@@ -1,12 +1,12 @@
-package com.inventory.pharmacyInventory.mapper;
+package com.pharmacyInventory.inventory.mapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.inventory.pharmacyInventory.dtos.ReferenceSource.ReferenceSourceDTO;
-import com.inventory.pharmacyInventory.model.ReferenceSource;
+import com.pharmacyInventory.inventory.dtos.ReferenceSource.ReferenceSourceDTO;
+import com.pharmacyInventory.inventory.model.ReferenceSource;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

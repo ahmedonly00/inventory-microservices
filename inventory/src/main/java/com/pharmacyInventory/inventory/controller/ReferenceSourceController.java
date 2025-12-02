@@ -1,53 +1,62 @@
 package com.pharmacyInventory.inventory.controller;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.pharmacyInventory.inventory.dtos.ReferenceSource.ReferenceSourceDTO;
 import com.pharmacyInventory.inventory.services.ReferenceSourceService;
-
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@Slf4j
 @RestController
-@RequestMapping("/api/reference-sources")
 @RequiredArgsConstructor
+@RequestMapping("/api/reference-sources")
+@CrossOrigin(origins = "*")
 public class ReferenceSourceController {
     
     private final ReferenceSourceService referenceSourceService;
+
     
-    
-    @GetMapping(value= "/getAllReferenceSources")
-    public List<ReferenceSourceDTO> getAllReferenceSources() {
-        return referenceSourceService.getAllReferenceSources();
+    @GetMapping("/all")
+    public ResponseEntity<List<ReferenceSourceDTO>> getAllReferenceSources() {
+        log.info("Fetching all reference sources");
+        List<ReferenceSourceDTO> referenceSources = referenceSourceService.getAllReferenceSources();
+        return ResponseEntity.ok(referenceSources);
     }
 
-    @GetMapping(value= "/getReferenceSourceById/{id}")
-    public Optional<ReferenceSourceDTO> getReferenceSourceById(@PathVariable Long id) {
-        return referenceSourceService.getReferenceSourceById(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<ReferenceSourceDTO> getReferenceSourceById(@PathVariable Long id) {
+        log.info("Fetching reference source with id: {}", id);
+        return referenceSourceService.getReferenceSourceById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping(value= "/createReferenceSource")
-    public ReferenceSourceDTO createReferenceSource(@RequestBody ReferenceSourceDTO referenceSourceDTO) {
-        return referenceSourceService.createReferenceSource(referenceSourceDTO);
+    @PostMapping
+    public ResponseEntity<ReferenceSourceDTO> createReferenceSource(
+            @Valid @RequestBody ReferenceSourceDTO referenceSourceDTO) {
+        log.info("Creating new reference source");
+        ReferenceSourceDTO created = referenceSourceService.createReferenceSource(referenceSourceDTO);
+        return ResponseEntity.ok(created);
     }
 
-    @PutMapping(value= "/updateReferenceSource/{id}")
-    public ReferenceSourceDTO updateReferenceSource(@PathVariable Long id, @RequestBody ReferenceSourceDTO referenceSourceDTO) {
-        return referenceSourceService.updateReferenceSource(id, referenceSourceDTO);
+    @PutMapping("/{id}")
+    public ResponseEntity<ReferenceSourceDTO> updateReferenceSource(
+            @PathVariable Long id, 
+            @Valid @RequestBody ReferenceSourceDTO referenceSourceDTO) {
+        log.info("Updating reference source with id: {}", id);
+        ReferenceSourceDTO updated = referenceSourceService.updateReferenceSource(id, referenceSourceDTO);
+        return ResponseEntity.ok(updated);
     }
 
-    @DeleteMapping(value= "/deleteReferenceSource/{id}")
-    public void deleteReferenceSource(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteReferenceSource(@PathVariable Long id) {
+        log.info("Deleting reference source with id: {}", id);
         referenceSourceService.deleteReferenceSource(id);
+        return ResponseEntity.noContent().build();
     }
     
 }

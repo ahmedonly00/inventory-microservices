@@ -1,14 +1,12 @@
 package com.pharmacyInventory.inventory.controller;
 
 import com.pharmacyInventory.inventory.dtos.suppliers.SuppliersDTO;
-import com.pharmacyInventory.inventory.services.SuppliersService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import main.java.com.pharmacyInventory.inventory.feign.SupplierServiceClient;
+import com.pharmacyInventory.inventory.feign.SupplierServiceClient;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

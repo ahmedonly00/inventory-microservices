@@ -17,11 +17,13 @@ public class StockService {
     private final StockRepository stockRepository;
     
     
-    public List<Stock> getAllStocks() {
+    public List<Stock> getAllStocks(Long branchId) {
+        log.info("Fetching all stocks for branch with id: {}", branchId);
         return stockRepository.findAll();
     }
     
     public Optional<Stock> getStockById(Long id) {
+        log.info("Fetching stock with id: {}", id);
         return stockRepository.findById(id);
     }
     

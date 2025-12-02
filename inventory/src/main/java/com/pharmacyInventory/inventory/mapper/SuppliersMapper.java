@@ -1,7 +1,7 @@
-package com.inventory.pharmacyInventory.mapper;
+package com.pharmacyInventory.inventory.mapper;
 
-import com.inventory.pharmacyInventory.dtos.suppliers.SuppliersDTO;
-import com.inventory.pharmacyInventory.model.Suppliers;
+import com.pharmacyInventory.inventory.dtos.suppliers.SuppliersDTO;
+import com.pharmacyInventory.inventory.model.Suppliers;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

@@ -1,5 +1,11 @@
 package com.pharmacyInventory.inventory.feign;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.pharmacyInventory.inventory.dtos.suppliers.SuppliersDTO;
+import com.pharmacyInventory.inventory.exception.ResourceNotFoundException;
+
 public class SupplierServiceFallback implements SupplierServiceClient{
     
     @Override
@@ -9,26 +15,26 @@ public class SupplierServiceFallback implements SupplierServiceClient{
 
     @Override
     public SuppliersDTO getSupplierById(Long id) {
-        return new RuntimeException("Supplier service is down");
+        throw new ResourceNotFoundException("Supplier service is down");
     }
 
     @Override
     public SuppliersDTO createSupplier(SuppliersDTO supplierDTO) {
-        return new RuntimeException("Supplier service is down");
+        throw new ResourceNotFoundException("Supplier service is down");
     }
 
     @Override
     public SuppliersDTO updateSupplier(Long id, SuppliersDTO supplierDTO) {
-        return new RuntimeException("Supplier service is down");
+        throw new ResourceNotFoundException("Supplier service is down");
     }
 
     @Override
     public void deleteSupplier(Long id) {   
-        throw new RuntimeException("Supplier service is down");
+        throw new ResourceNotFoundException("Supplier service is down");
     }
 
     @Override
     public void deactivateSupplier(Long id) {   
-        throw new RuntimeException("Supplier service is down");
+        throw new ResourceNotFoundException("Supplier service is down");
     }
 }

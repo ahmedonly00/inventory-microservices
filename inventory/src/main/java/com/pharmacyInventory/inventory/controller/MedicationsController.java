@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,39 +34,19 @@ public class MedicationsController {
     }
 
     @PostMapping(value = "/createMedication")
-    public ResponseEntity<?> createMedication(@Valid @RequestBody MedicationsDTO medicationDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            String errorMessage = "Invalid request";
-            var fieldError = bindingResult.getFieldError();
-            if (fieldError != null && fieldError.getDefaultMessage() != null) {
-                errorMessage = fieldError.getDefaultMessage();
-            }
-            log.warn("Validation errors in create medication request: {}", bindingResult.getAllErrors());
-            return ResponseEntity.badRequest().body(errorMessage);
-        }
-
+    public ResponseEntity<?> createMedication(@Valid @RequestBody MedicationsDTO medicationDTO) {
         try {
             MedicationsDTO created = medicationsService.createMedication(medicationDTO);
-            log.info("Created new medication with id: {}", created.getId());
+            log.info("Created new medication with id: {}", created.getMedicationId());
             return ResponseEntity.ok(created);
         } catch (Exception e) {
             log.error("Error creating medication", e);
             return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        } 
     }
 
     @PutMapping(value = "/updateMedication/{id}")
-    public ResponseEntity<?> updateMedication(@PathVariable Long id, @Valid @RequestBody MedicationsDTO medicationDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            String errorMessage = "Invalid request";
-            var fieldError = bindingResult.getFieldError();
-            if (fieldError != null && fieldError.getDefaultMessage() != null) {
-                errorMessage = fieldError.getDefaultMessage();
-            }
-            log.warn("Validation errors in update medication request: {}", bindingResult.getAllErrors());
-            return ResponseEntity.badRequest().body(errorMessage);
-        }
-
+    public ResponseEntity<?> updateMedication(@PathVariable Long id, @Valid @RequestBody MedicationsDTO medicationDTO) {
         try {
             MedicationsDTO updated = medicationsService.updateMedication(id, medicationDTO);
             log.info("Updated medication with id: {}", id);
@@ -102,14 +81,14 @@ public class MedicationsController {
         }
     }
 
-    @GetMapping(value = "/search")
+    @GetMapping(value = "/searchMedications")
     public ResponseEntity<List<MedicationsDTO>> searchMedications(@RequestParam String query) {
         log.info("Searching medications with query: {}", query);
         List<MedicationsDTO> medications = medicationsService.searchMedications(query);
         return ResponseEntity.ok(medications);
     }
 
-    @PostMapping(value = "/upload")
+    @PostMapping(value = "/uploadInventory")
     public ResponseEntity<?> uploadInventory(@RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
         try {
             List<MedicationsDTO> medications = medicationsService.uploadInventory(file);
@@ -121,7 +100,7 @@ public class MedicationsController {
         }
     }
 
-    @GetMapping(value = "/template")
+    @GetMapping(value = "/downloadTemplate")
     public ResponseEntity<?> downloadTemplate() {
         try {
             byte[] template = medicationsService.downloadTemplate();

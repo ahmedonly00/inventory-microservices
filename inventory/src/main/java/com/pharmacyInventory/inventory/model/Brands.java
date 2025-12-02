@@ -29,5 +29,7 @@ public class Brands {
     //relationships
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
     private List<Equivalents> equivalents;
+
+    
     
 }

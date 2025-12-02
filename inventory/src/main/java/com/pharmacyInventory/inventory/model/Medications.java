@@ -67,10 +67,8 @@ public class Medications {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private Users addedBy;
-
+    //relationships
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Categories category;
@@ -80,22 +78,10 @@ public class Medications {
     private Suppliers suppliers;
     
     @OneToMany(mappedBy = "medication", cascade = CascadeType.ALL)
-    private List<SaleItem> saleItems;
-    
-    @OneToMany(mappedBy = "medication", cascade = CascadeType.ALL)
-    private List<Transactions> transactions;
-    
-    @OneToMany(mappedBy = "medication", cascade = CascadeType.ALL)
     private List<Transfers> transfers;
     
     @OneToMany(mappedBy = "originalMedication", cascade = CascadeType.ALL)
     private List<Equivalents> equivalents;
-    
-    @OneToMany(mappedBy = "equivalentMedication", cascade = CascadeType.ALL)
-    private List<Equivalents> equivalentOf;
-    
-    @OneToMany(mappedBy = "medication", cascade = CascadeType.ALL)
-    private List<Alerts> alerts;
 
     @OneToMany(mappedBy = "medication", cascade = CascadeType.ALL)
     private List<Stock> stock;
