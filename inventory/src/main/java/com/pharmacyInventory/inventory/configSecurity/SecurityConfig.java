@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -73,11 +72,8 @@ public class SecurityConfig {
                        "/api/categories/getAllCategories",
                        "/api/categories/getCategoryById/**",
                        "/api/suppliers/getAllSuppliers",
-                       "/api/suppliers/getSupplierById/**"
-                    ).permitAll()
-                    // Admin and Pharmacist endpoints - require ADMIN or PHARMACIST role
-                    .requestMatchers(
-                        "/api/users/**",
+                       "/api/suppliers/getSupplierById/**",
+                       "/api/users/**",
                         "/api/medications/**",
                         "/api/categories/**",
                         "/api/suppliers/**",
@@ -86,26 +82,18 @@ public class SecurityConfig {
                         "/api/transfers/**",
                         "/api/taxes/**",
                         "/api/settings/**",
-                        "/api/bulk/**"
-                    ).hasAnyRole("ADMIN", "PHARMACIST")
-                    // Dashboard and Reports - require ADMIN, PHARMACIST, or MANAGER role
-                    .requestMatchers(
+                        "/api/bulk/**",
+                        "/api/equivalents/**",
+                        "/api/brands/**",
                         "/api/dashboard/**",
-                        "/api/reports/**"
-                    ).hasAnyRole("ADMIN", "PHARMACIST", "MANAGER")
-                    // Audit Logs - require ADMIN role only
-                    .requestMatchers(
+                        "/api/reports/**",
                         "/api/audit-logs/**"
-                    ).hasRole("ADMIN")
-                    // Equivalents - require PHARMACIST or ADMIN role
-                    .requestMatchers(
-                        "/api/equivalents/**"
-                    ).hasAnyRole("PHARMACIST", "ADMIN")
+                    ).permitAll()
                     .anyRequest().authenticated()
             )
             .sessionManagement(session -> 
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
+            );
             //.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             //.addFilterAfter(emailVerificationFilter, JwtAuthenticationFilter.class);
 

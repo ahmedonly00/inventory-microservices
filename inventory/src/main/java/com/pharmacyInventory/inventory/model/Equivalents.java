@@ -1,6 +1,7 @@
 package com.pharmacyInventory.inventory.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 import jakarta.persistence.Column;
@@ -41,7 +42,13 @@ public class Equivalents {
     private String strength;
 
     @Column(nullable = false)
-    private String brands;
+    private String referenceSourceName;
+
+    @Column(nullable = false)
+    private List<Long> brandIds;
+
+    @Column(nullable = false)
+    private List<String> brandNames;
 
     @Column(nullable = false)
     private String source;

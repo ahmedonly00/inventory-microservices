@@ -3,11 +3,14 @@ package com.pharmacyInventory.inventory.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
+
+import com.pharmacyInventory.inventory.config.FeignConfig;
+
 import java.util.List;
 import java.util.Map;
 
-@FeignClient(name = "bulk-operations-service", 
-             url = "${bulk.operations.service.url}",
+@FeignClient(name = "bulk-operations-service",
+             configuration = FeignConfig.class,
              fallback = BulkOperationsServiceFallback.class)
 public interface BulkOperationsServiceClient {
     

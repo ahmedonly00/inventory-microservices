@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
+import com.pharmacyInventory.inventory.config.FeignConfig;
 import com.pharmacyInventory.inventory.dtos.ReferenceSource.ReferenceSourceDTO;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 
 @FeignClient(name = "reference-source-service", 
-            url = "${reference.source.service.url}",
+            configuration = FeignConfig.class,
             fallback = ReferenceSourceServiceFallback.class)
 public interface ReferenceSourceServiceClient {
 

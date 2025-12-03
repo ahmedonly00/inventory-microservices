@@ -20,35 +20,35 @@ public class SuppliersController {
 
     private final SupplierServiceClient supplierServiceClient;
 
-    @GetMapping("/all")
+    @GetMapping("/getAllSuppliers")
     public ResponseEntity<List<SuppliersDTO>> getAllSuppliers() {
         log.info("Fetching all suppliers");
         List<SuppliersDTO> suppliers = supplierServiceClient.getAllSuppliers();
         return ResponseEntity.ok(suppliers);
     }
 
-    @PostMapping("/create")
+    @PostMapping("/createSupplier")
     public ResponseEntity<?> createSupplier(@Valid @RequestBody SuppliersDTO supplierDTO) {
         log.info("Creating new supplier");
         SuppliersDTO created = supplierServiceClient.createSupplier(supplierDTO);
         return ResponseEntity.ok(created);
     }
 
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}/updateSupplier")
     public ResponseEntity<?> updateSupplier(@PathVariable Long id, @Valid @RequestBody SuppliersDTO supplierDTO) {
         log.info("Updating supplier with id: {}", id);
         SuppliersDTO updated = supplierServiceClient.updateSupplier(id, supplierDTO);
         return ResponseEntity.ok(updated);
     }
 
-    @PatchMapping("/{id}/deactivate")
+    @PatchMapping("/{id}/deactivateSupplier")
     public ResponseEntity<?> deactivateSupplier(@PathVariable Long id) {
         log.info("Deactivating supplier with id: {}", id);
         supplierServiceClient.deactivateSupplier(id);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}/deleteSupplier")
     public ResponseEntity<?> deleteSupplier(@PathVariable Long id) {
         log.info("Deleting supplier with id: {}", id);
         supplierServiceClient.deleteSupplier(id);

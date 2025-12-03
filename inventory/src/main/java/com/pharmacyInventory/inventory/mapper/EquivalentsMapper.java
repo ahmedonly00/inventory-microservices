@@ -30,8 +30,10 @@ public class EquivalentsMapper {
                 .inn(equivalent.getInn())
                 .form(equivalent.getForm())
                 .strength(equivalent.getStrength())
-                .brands(equivalent.getBrands())
-                .source(equivalent.getSource())
+                .referenceSourceId(equivalent.getReferenceSource().getId())
+                .referenceSourceName(equivalent.getReferenceSource().getName())
+                .brandIds(equivalent.getBrandIds())
+                .brandNames(equivalent.getBrandNames())
                 .createdAt(equivalent.getCreatedAt())
                 .originalMedicationId(equivalent.getOriginalMedication() != null ? equivalent.getOriginalMedication().getMedicationId() : null)
                 .originalMedicationName(equivalent.getOriginalMedication() != null ? equivalent.getOriginalMedication().getName() : null)
@@ -51,9 +53,11 @@ public class EquivalentsMapper {
         equivalent.setInn(equivalentsDTO.getInn());
         equivalent.setForm(equivalentsDTO.getForm());
         equivalent.setStrength(equivalentsDTO.getStrength());
-        equivalent.setBrands(equivalentsDTO.getBrands());
-        equivalent.setSource(equivalentsDTO.getSource());
+        equivalent.setReferenceSourceName(equivalentsDTO.getReferenceSourceName());
+        equivalent.setBrandIds(equivalentsDTO.getBrandIds());
+        equivalent.setBrandNames(equivalentsDTO.getBrandNames());
         equivalent.setCreatedAt(equivalentsDTO.getCreatedAt());
+
                 
         return equivalent;
     } 

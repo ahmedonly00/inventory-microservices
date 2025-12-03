@@ -4,11 +4,12 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.pharmacyInventory.inventory.config.FeignConfig;
 import com.pharmacyInventory.inventory.dtos.medications.MedicationsDTO;
 
 import java.util.List;
 
-@FeignClient(name = "medications-service", url = "${medications.service.url}")
+@FeignClient(name = "medications-service", configuration = FeignConfig.class)
 public interface MedicationsServiceClient {
 
     @GetMapping("/api/medications")

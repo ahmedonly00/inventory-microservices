@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -16,8 +17,10 @@ public class EquivalentsDTO {
     private String inn;
     private String form;
     private String strength;
-    private String brands;
-    private String source;
+    private Long referenceSourceId;
+    private String referenceSourceName;
+    private List<Long> brandIds;
+    private List<String> brandNames;
     private LocalDateTime createdAt;
     private Long originalMedicationId;
     private String originalMedicationName;

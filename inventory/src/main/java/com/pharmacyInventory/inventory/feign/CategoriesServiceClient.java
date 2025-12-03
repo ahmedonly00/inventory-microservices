@@ -4,9 +4,10 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+import com.pharmacyInventory.inventory.config.FeignConfig;
 import com.pharmacyInventory.inventory.dtos.categories.CategoriesDTO;
 
-@FeignClient(name = "categories-service", url = "${categories.service.url}")
+@FeignClient(name = "categories-service", configuration = FeignConfig.class)
 public interface CategoriesServiceClient {
     
     @GetMapping("/api/categories")

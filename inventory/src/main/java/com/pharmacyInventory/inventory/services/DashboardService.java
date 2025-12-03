@@ -1,9 +1,9 @@
 package com.pharmacyInventory.inventory.services;
 
+import com.pharmacyInventory.inventory.feign.PurchaseServiceClient;
+import com.pharmacyInventory.inventory.feign.SalesServiceClient;
 import com.pharmacyInventory.inventory.model.Medications;
 import com.pharmacyInventory.inventory.repository.MedicationsRepository;
-import com.pharmacyInventory.inventory.repository.PurchaseRepository;
-import com.pharmacyInventory.inventory.repository.SalesRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,8 +22,9 @@ import java.util.stream.Collectors;
 public class DashboardService {
 
     private final MedicationsRepository medicationsRepository;
-    private final SalesRepository salesRepository;
-    private final PurchaseRepository purchaseRepository;
+    private final SalesServiceClient salesServiceClient;
+    private final PurchaseServiceClient purchaseServiceClient;
+
                               
 
     public Map<String, Object> getDashboardStats() {
@@ -68,15 +69,11 @@ public class DashboardService {
     
     private void calculateBasicMetrics(Map<String, Object> data) {
         // Total Sales (sum of all sales)
-        double totalSales = salesRepository.findAll().stream()
-                .mapToDouble(sale -> sale.getTotalAmount() != null ? sale.getTotalAmount() : 0.0)
-                .sum();
+        double totalSales = salesServiceClient.getTotalSales();
         data.put("totalSales", roundToTwoDecimalPlaces(totalSales));
         
         // Total Purchases (sum of all purchases)
-        double totalPurchases = purchaseRepository.findAll().stream()
-                .mapToDouble(purchase -> purchase.getTotalAmount() != null ? purchase.getTotalAmount() : 0.0)
-                .sum();
+        double totalPurchases = purchaseServiceClient.getTotalPurchases();
         data.put("totalPurchases", roundToTwoDecimalPlaces(totalPurchases));
         
         // Stock Value (sum of (quantity * price) for all medications)
@@ -129,14 +126,10 @@ public class DashboardService {
             LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
             
             // Calculate monthly sales
-            double monthlySales = salesRepository.findBySaleDateBetween(startDateTime, endDateTime).stream()
-                    .mapToDouble(sale -> sale.getTotalAmount() != null ? sale.getTotalAmount() : 0.0)
-                    .sum();
+            double monthlySales = salesServiceClient.getTotalSalesByDateRange(startDateTime, endDateTime);
             
             // Calculate monthly purchases
-            double monthlyPurchases = purchaseRepository.findByPurchaseDateBetween(startDateTime, endDateTime).stream()
-                    .mapToDouble(purchase -> purchase.getTotalAmount() != null ? purchase.getTotalAmount() : 0.0)
-                    .sum();
+            double monthlyPurchases = purchaseServiceClient.getTotalPurchasesByDateRange(startDateTime, endDateTime);
             
             Map<String, Object> monthlyData = new HashMap<>();
             monthlyData.put("month", startDate.getMonth().toString() + " " + startDate.getYear());
@@ -147,54 +140,91 @@ public class DashboardService {
         data.put("monthlyTrend", monthlyTrend);
     }
     
+    // private void calculateRevenueByPaymentMethod(Map<String, Object> data) {
+    //     Map<String, Double> revenueByPaymentMethod = new HashMap<>();
+        
+    //     salesServiceClient.getPaymentMethodBreakdown().forEach(sale -> {
+    //         if (sale.getPaymentMethod() != null) {
+    //             String method = sale.getPaymentMethod().toString();
+    //             double amount = sale.getTotalAmount() != null ? sale.getTotalAmount() : 0.0;
+    //             revenueByPaymentMethod.merge(method, amount, (v1, v2) -> v1 + v2);
+    //         }
+    //     });
+
     private void calculateRevenueByPaymentMethod(Map<String, Object> data) {
-        Map<String, Double> revenueByPaymentMethod = new HashMap<>();
-        
-        salesRepository.findAll().forEach(sale -> {
-            if (sale.getPaymentMethod() != null) {
-                String method = sale.getPaymentMethod().toString();
-                double amount = sale.getTotalAmount() != null ? sale.getTotalAmount() : 0.0;
-                revenueByPaymentMethod.merge(method, amount, (v1, v2) -> v1 + v2);
-            }
-        });
-        
-        // Convert to list of maps for better JSON structure
-        List<Map<String, Object>> paymentMethodData = revenueByPaymentMethod.entrySet().stream()
-                .map(entry -> {
-                    Map<String, Object> item = new HashMap<>();
-                    item.put("method", entry.getKey());
-                    item.put("amount", roundToTwoDecimalPlaces(entry.getValue()));
-                    return item;
-                })
-                .collect(Collectors.toList());
-                
-        data.put("revenueByPaymentMethod", paymentMethodData);
+        try {
+            // Get the payment method breakdown from the sales service
+            Map<String, Double> paymentMethodBreakdown = salesServiceClient.getPaymentMethodBreakdown();
+            
+            // Convert the map to a list of maps for better JSON structure
+            List<Map<String, Object>> paymentMethodData = paymentMethodBreakdown.entrySet().stream()
+                    .map(entry -> {
+                        Map<String, Object> item = new HashMap<>();
+                        item.put("method", entry.getKey());
+                        item.put("amount", roundToTwoDecimalPlaces(entry.getValue()));
+                        return item;
+                    })
+                    .collect(Collectors.toList());
+            
+            // Add both the raw breakdown and formatted data to the response
+            data.put("paymentMethods", paymentMethodBreakdown);
+            data.put("revenueByPaymentMethod", paymentMethodData);
+            
+        } catch (Exception e) {
+            log.error("Error fetching payment method breakdown: {}", e.getMessage(), e);
+            data.put("paymentMethods", Map.of());
+            data.put("revenueByPaymentMethod", List.of());
+        }
     }
     
-    private void calculateTopSellingMedications(Map<String, Object> data) {
-        // This is a simplified version - in a real app, you'd want to query SaleItem for accurate data
-        List<Map<String, Object>> topSelling = medicationsRepository.findAll().stream()
-                .filter(med -> med.getSaleItems() != null && !med.getSaleItems().isEmpty())
-                .map(med -> {
-                    double totalSold = med.getSaleItems() != null ? med.getSaleItems().stream()
-                            .filter(Objects::nonNull)
-                            .mapToDouble(item -> item.getQuantity() * item.getUnitPrice())
-                            .sum() : 0.0;
+    // private void calculateTopSellingMedications(Map<String, Object> data) {
+    //     // This is a simplified version - in a real app, you'd want to query SaleItem for accurate data
+    //     List<Map<String, Object>> topSelling = medicationsRepository.findAll().stream()
+    //             .filter(med -> med.getSaleItems() != null && !med.getSaleItems().isEmpty())
+    //             .map(med -> {
+    //                 double totalSold = med.getSaleItems() != null ? med.getSaleItems().stream()
+    //                         .filter(Objects::nonNull)
+    //                         .mapToDouble(item -> item.getQuantity() * item.getUnitPrice())
+    //                         .sum() : 0.0;
                     
+    //                 Map<String, Object> item = new HashMap<>();
+    //                 item.put("id", med.getMedicationId());
+    //                 item.put("name", med.getName());
+    //                 item.put("totalSold", roundToTwoDecimalPlaces(totalSold));
+    //                 item.put("stockQuantity", med.getStockQuantity());
+    //                 return item;
+    //             })
+    //             .sorted((a, b) -> Double.compare((Double)b.get("totalSold"), (Double)a.get("totalSold")))
+    //             .limit(10)
+    //             .collect(Collectors.toList());
+                
+    //     data.put("topSellingMedications", topSelling);
+    // }
+
+    private void calculateTopSellingMedications(Map<String, Object> data) {
+        try {
+            // This will be implemented in the sales service
+            List<Map<String, Object>> topSelling = salesServiceClient.getTopSellingMedications(10);
+            
+            // Process the response to ensure consistent format
+            List<Map<String, Object>> processedTopSelling = topSelling.stream()
+                .map(med -> {
                     Map<String, Object> item = new HashMap<>();
-                    item.put("id", med.getMedicationId());
-                    item.put("name", med.getName());
-                    item.put("totalSold", roundToTwoDecimalPlaces(totalSold));
-                    item.put("stockQuantity", med.getStockQuantity());
+                    item.put("id", med.get("id"));
+                    item.put("name", med.get("name"));
+                    item.put("totalSold", roundToTwoDecimalPlaces((Double) med.get("totalSold")));
+                    item.put("stockQuantity", med.get("stockQuantity"));
                     return item;
                 })
-                .sorted((a, b) -> Double.compare((Double)b.get("totalSold"), (Double)a.get("totalSold")))
-                .limit(10)
                 .collect(Collectors.toList());
                 
-        data.put("topSellingMedications", topSelling);
+            data.put("topSellingMedications", processedTopSelling);
+        } catch (Exception e) {
+            log.error("Error fetching top selling medications: {}", e.getMessage(), e);
+            data.put("topSellingMedications", List.of());
+        }
     }
-    
+ 
     private void calculateStockLevelDistribution(Map<String, Object> data) {
         List<Medications> allMedications = medicationsRepository.findAll();
         

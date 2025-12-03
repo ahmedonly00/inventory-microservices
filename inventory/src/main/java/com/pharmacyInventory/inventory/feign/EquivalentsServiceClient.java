@@ -3,9 +3,11 @@ package com.pharmacyInventory.inventory.feign;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+
+import com.pharmacyInventory.inventory.config.FeignConfig;
 import com.pharmacyInventory.inventory.dtos.equivalents.EquivalentsDTO;
 
-@FeignClient(name = "equivalents-service", url = "${equivalents.service.url}")
+@FeignClient(name = "equivalents-service", configuration = FeignConfig.class)
 public interface EquivalentsServiceClient {
     
     @GetMapping("/api/equivalents")

@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
+import com.pharmacyInventory.inventory.config.FeignConfig;
 import com.pharmacyInventory.inventory.dtos.transfers.TransfersDTO;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
-@FeignClient(name = "transfers-service", url = "${transfers.service.url}")
+@FeignClient(name = "transfers-service", configuration = FeignConfig.class)
 public interface TransfersServiceClient {
 
     @PostMapping("/api/transfers")

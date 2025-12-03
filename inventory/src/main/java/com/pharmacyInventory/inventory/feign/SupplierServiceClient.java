@@ -10,13 +10,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
+import com.pharmacyInventory.inventory.config.FeignConfig;
 import com.pharmacyInventory.inventory.dtos.suppliers.SuppliersDTO;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 
 @FeignClient(name = "supplier-service", 
-            url = "${supplier.service.url}",
+            configuration = FeignConfig.class,
             fallback = SupplierServiceFallback.class)
 public interface SupplierServiceClient {
     

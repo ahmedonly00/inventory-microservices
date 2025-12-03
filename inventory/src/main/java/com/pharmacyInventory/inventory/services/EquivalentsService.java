@@ -1,11 +1,17 @@
 package com.pharmacyInventory.inventory.services;
 
 import com.pharmacyInventory.inventory.dtos.equivalents.EquivalentsDTO;
+import com.pharmacyInventory.inventory.exception.ResourceNotFoundException;
 import com.pharmacyInventory.inventory.mapper.EquivalentsMapper;
+import com.pharmacyInventory.inventory.model.Brands;
 import com.pharmacyInventory.inventory.model.Equivalents;
 import com.pharmacyInventory.inventory.model.Medications;
+import com.pharmacyInventory.inventory.model.ReferenceSource;
+import com.pharmacyInventory.inventory.repository.BrandRepository;
 import com.pharmacyInventory.inventory.repository.EquivalentsRepository;
 import com.pharmacyInventory.inventory.repository.MedicationsRepository;
+import com.pharmacyInventory.inventory.repository.ReferenceSourceRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +27,10 @@ public class EquivalentsService {
     private final EquivalentsRepository equivalentsRepository;
     private final MedicationsRepository medicationsRepository;
     private final EquivalentsMapper equivalentsMapper;
+    private final ReferenceSourceRepository referenceSourceRepository;
+    private final BrandRepository brandRepository;
+    
+
 
     public List<EquivalentsDTO> getAllEquivalents() {
         log.info("Fetching all equivalents");
@@ -48,6 +58,15 @@ public class EquivalentsService {
         Medications equivalentMedication = medicationsRepository.findById(equivalentDTO.getEquivalentMedicationId())
                 .orElseThrow(() -> new RuntimeException("Equivalent medication not found with id: " + equivalentDTO.getEquivalentMedicationId()));
 
+        ReferenceSource referenceSource = referenceSourceRepository.findById(equivalentDTO.getReferenceSourceId())
+                .orElseThrow(() -> new RuntimeException("Reference source not found with id: " + equivalentDTO.getReferenceSourceId()));
+
+        // Validate all brands exist
+        List<Brands> brands = brandRepository.findAllById(equivalentDTO.getBrandIds());
+        if (brands.size() != equivalentDTO.getBrandIds().size()) {
+            throw new ResourceNotFoundException("One or more brands not found");
+        }
+                
         Equivalents equivalent = equivalentsMapper.toEquivalents(equivalentDTO);
         equivalent.setOriginalMedication(originalMedication);
         equivalent.setEquivalentMedication(equivalentMedication);
@@ -68,8 +87,8 @@ public class EquivalentsService {
         existing.setInn(equivalentDTO.getInn());
         existing.setForm(equivalentDTO.getForm());
         existing.setStrength(equivalentDTO.getStrength());
-        existing.setBrands(equivalentDTO.getBrands());
-        existing.setSource(equivalentDTO.getSource());
+        existing.setBrandNames(equivalentDTO.getBrandNames());
+        existing.setReferenceSourceName(equivalentDTO.getReferenceSourceName());
 
         // Update medications if changed
         if (!equivalentDTO.getOriginalMedicationId().equals(existing.getOriginalMedication().getMedicationId())) {
