@@ -26,6 +26,7 @@ public class BrandMapper {
         }
         return BrandsDTO.builder()
                 .id(brands.getId())
+                .branchId(brands.getBranchId())
                 .name(brands.getName())
                 .build();
     }
@@ -36,6 +37,7 @@ public class BrandMapper {
         }
         return Brands.builder()
                 .id(brandsDTO.getId())
+                .branchId(brandsDTO.getBranchId())
                 .name(brandsDTO.getName())
                 .build();
     }

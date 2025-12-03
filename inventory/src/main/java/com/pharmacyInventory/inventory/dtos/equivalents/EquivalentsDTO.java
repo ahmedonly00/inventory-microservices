@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 public class EquivalentsDTO {
     private Long id;
+    private String branchId;
     private String inn;
     private String form;
     private String strength;

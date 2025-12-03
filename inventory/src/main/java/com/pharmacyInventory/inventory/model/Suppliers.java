@@ -26,6 +26,9 @@ public class Suppliers {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    private String branchId;
     
     @Column(name = "name" ,nullable = false)
     private String name;

@@ -45,6 +45,7 @@ public class MedicationsMapper {
                 .isActive(medication.getIsActive())
                 .createdAt(medication.getCreatedAt())
                 .updatedAt(medication.getUpdatedAt())
+                .branchId(medication.getBranchId())
                 .categoryId(medication.getCategory() != null ? medication.getCategory().getId() : null)
                 .categoryName(medication.getCategory() != null ? medication.getCategory().getName() : null)
                 .supplierId(medication.getSuppliers() != null ? medication.getSuppliers().getId() : null)

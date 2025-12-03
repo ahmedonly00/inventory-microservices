@@ -26,6 +26,7 @@ public class SuppliersMapper {
 
         return SuppliersDTO.builder()
                 .id(supplier.getId())
+                .branchId(supplier.getBranchId())
                 .name(supplier.getName())
                 .contactName(supplier.getContactName())
                 .email(supplier.getEmail())
@@ -45,6 +46,7 @@ public class SuppliersMapper {
 
         Suppliers supplier = new Suppliers();
         supplier.setId(suppliersDTO.getId());
+        supplier.setBranchId(suppliersDTO.getBranchId());
         supplier.setName(suppliersDTO.getName());
         supplier.setContactName(suppliersDTO.getContactName());
         supplier.setEmail(suppliersDTO.getEmail());

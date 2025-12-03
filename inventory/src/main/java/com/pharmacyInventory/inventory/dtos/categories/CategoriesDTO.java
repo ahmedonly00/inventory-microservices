@@ -13,6 +13,7 @@ import java.util.List;
 @Builder
 public class CategoriesDTO {
     private Long id;
+    private String branchId;
     private String name;
     private CategoryType type;
     private String color;

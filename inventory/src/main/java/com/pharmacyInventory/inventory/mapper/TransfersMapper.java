@@ -37,8 +37,6 @@ public class TransfersMapper {
                 .notes(transfer.getNotes())
                 .medicationId(transfer.getMedication() != null ? transfer.getMedication().getMedicationId() : null)
                 .medicationName(transfer.getMedication() != null ? transfer.getMedication().getName() : null)
-                .requestedById(transfer.getRequestedBy() != null ? transfer.getRequestedBy().getId() : null)
-                .requestedByName(transfer.getRequestedBy() != null ? transfer.getRequestedBy().getName() : null)
                 .build();
     }
 

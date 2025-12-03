@@ -29,6 +29,9 @@ public class Equivalents {
     private Long id;
 
     @Column(nullable = false)
+    private String branchId;
+
+    @Column(nullable = false)
     private String inn;
 
     @Column(nullable = false)

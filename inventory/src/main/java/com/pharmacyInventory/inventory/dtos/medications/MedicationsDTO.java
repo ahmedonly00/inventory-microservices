@@ -14,6 +14,7 @@ import jakarta.validation.constraints.NotNull;
 @Builder
 public class MedicationsDTO {
     private Long medicationId;
+    private String branchId;
     private String name;
     private String form;
     private String strength;

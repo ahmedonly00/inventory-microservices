@@ -26,10 +26,13 @@ public class Brands {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private String branchId;
+
     //relationships
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
     private List<Equivalents> equivalents;
 
-    
+
     
 }

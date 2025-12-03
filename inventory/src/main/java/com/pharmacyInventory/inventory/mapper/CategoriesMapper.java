@@ -26,6 +26,7 @@ public class CategoriesMapper {
 
         return CategoriesDTO.builder()
                 .id(category.getId())
+                .branchId(category.getBranchId())
                 .name(category.getName())
                 .type(category.getType())
                 .color(category.getColor())
@@ -43,6 +44,7 @@ public class CategoriesMapper {
 
         Categories category = new Categories();
         category.setId(categoriesDTO.getId());
+        category.setBranchId(categoriesDTO.getBranchId());
         category.setName(categoriesDTO.getName());
         category.setType(categoriesDTO.getType());
         category.setColor(categoriesDTO.getColor());

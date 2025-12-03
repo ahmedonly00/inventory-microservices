@@ -13,6 +13,7 @@ import java.util.List;
 @Builder
 public class SuppliersDTO {
     private Long id;
+    private String branchId;
     private String name;
     private String contactName;
     private String email;

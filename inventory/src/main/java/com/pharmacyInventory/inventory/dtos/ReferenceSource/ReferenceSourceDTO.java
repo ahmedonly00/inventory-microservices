@@ -7,5 +7,6 @@ import lombok.Data;
 @Builder
 public class ReferenceSourceDTO {
     private Long id;
+    private String branchId;
     private String name;
 }

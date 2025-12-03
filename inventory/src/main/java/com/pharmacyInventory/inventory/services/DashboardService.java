@@ -182,7 +182,7 @@ public class DashboardService {
                             .sum() : 0.0;
                     
                     Map<String, Object> item = new HashMap<>();
-                    item.put("id", med.getId());
+                    item.put("id", med.getMedicationId());
                     item.put("name", med.getName());
                     item.put("totalSold", roundToTwoDecimalPlaces(totalSold));
                     item.put("stockQuantity", med.getStockQuantity());
@@ -238,7 +238,7 @@ public class DashboardService {
                         !med.getExpiryDate().isAfter(endDate30))
                 .map(med -> {
                     Map<String, Object> item = new HashMap<>();
-                    item.put("id", med.getId());
+                    item.put("id", med.getMedicationId());
                     item.put("name", med.getName());
                     item.put("expiryDate", med.getExpiryDate().toString());
                     item.put("daysToExpire", ChronoUnit.DAYS.between(today, med.getExpiryDate()));

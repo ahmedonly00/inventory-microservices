@@ -24,8 +24,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final EmailVerificationFilter emailVerificationFilter;
+    //private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    //private final EmailVerificationFilter emailVerificationFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -67,13 +67,13 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     // Public endpoints - no authentication required
                     .requestMatchers(
-                        "/api/medications/getAllMedications",
-                        "/api/medications/getMedicationById/**",
-                        "/api/medications/search",
-                        "/api/categories/getAllCategories",
-                        "/api/categories/getCategoryById/**",
-                        "/api/suppliers/getAllSuppliers",
-                        "/api/suppliers/getSupplierById/**"
+                       "/api/medications/getAllMedications",
+                       "/api/medications/getMedicationById/**",
+                       "/api/medications/search",
+                       "/api/categories/getAllCategories",
+                       "/api/categories/getCategoryById/**",
+                       "/api/suppliers/getAllSuppliers",
+                       "/api/suppliers/getSupplierById/**"
                     ).permitAll()
                     // Admin and Pharmacist endpoints - require ADMIN or PHARMACIST role
                     .requestMatchers(
@@ -97,11 +97,6 @@ public class SecurityConfig {
                     .requestMatchers(
                         "/api/audit-logs/**"
                     ).hasRole("ADMIN")
-                    // Notifications and Alerts - accessible by all authenticated users
-                    .requestMatchers(
-                        "/api/notifications/**",
-                        "/api/alerts/**"
-                    ).hasAnyRole("ADMIN", "PHARMACIST", "MANAGER", "CASHIER")
                     // Equivalents - require PHARMACIST or ADMIN role
                     .requestMatchers(
                         "/api/equivalents/**"
@@ -111,8 +106,8 @@ public class SecurityConfig {
             .sessionManagement(session -> 
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterAfter(emailVerificationFilter, JwtAuthenticationFilter.class);
+            //.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            //.addFilterAfter(emailVerificationFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }

@@ -26,6 +26,7 @@ public class StockMapper {
 
         return StockDTO.builder()
                 .id(stock.getId())
+                .branchId(stock.getBranchId())
                 .quantity(stock.getQuantity())
                 .batchNumber(stock.getBatchNumber())
                 .expiryDate(stock.getExpiryDate())
@@ -39,6 +40,7 @@ public class StockMapper {
 
         Stock stock = new Stock();
         stock.setId(stockDTO.getId());
+        stock.setBranchId(stockDTO.getBranchId());
         stock.setQuantity(stockDTO.getQuantity());
         stock.setBatchNumber(stockDTO.getBatchNumber());
         stock.setExpiryDate(stockDTO.getExpiryDate());

@@ -26,6 +26,7 @@ public class EquivalentsMapper {
 
         return EquivalentsDTO.builder()
                 .id(equivalent.getId())
+                .branchId(equivalent.getBranchId())
                 .inn(equivalent.getInn())
                 .form(equivalent.getForm())
                 .strength(equivalent.getStrength())
@@ -46,6 +47,7 @@ public class EquivalentsMapper {
 
         Equivalents equivalent = new Equivalents();
         equivalent.setId(equivalentsDTO.getId());
+        equivalent.setBranchId(equivalentsDTO.getBranchId());
         equivalent.setInn(equivalentsDTO.getInn());
         equivalent.setForm(equivalentsDTO.getForm());
         equivalent.setStrength(equivalentsDTO.getStrength());

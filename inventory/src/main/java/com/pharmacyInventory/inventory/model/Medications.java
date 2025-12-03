@@ -31,6 +31,9 @@ public class Medications {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long medicationId;
+
+    @Column(nullable = false)
+    private String branchId;
     
     @Column(nullable = false)
     private String name;

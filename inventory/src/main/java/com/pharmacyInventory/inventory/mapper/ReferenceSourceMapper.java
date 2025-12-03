@@ -22,6 +22,7 @@ public class ReferenceSourceMapper {
         }
         return ReferenceSourceDTO.builder()
                 .id(referenceSource.getId())
+                .branchId(referenceSource.getBranchId())
                 .name(referenceSource.getName())
                 .build();
     }
@@ -41,6 +42,7 @@ public class ReferenceSourceMapper {
         }
         return ReferenceSource.builder()
                 .id(referenceSourceDTO.getId())
+                .branchId(referenceSourceDTO.getBranchId())
                 .name(referenceSourceDTO.getName())
                 .build();
     }

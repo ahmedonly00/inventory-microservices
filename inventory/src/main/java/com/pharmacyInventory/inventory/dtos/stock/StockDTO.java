@@ -11,6 +11,7 @@ import lombok.Builder;
 @Builder
 public class StockDTO {
     private Long id;
+    private String branchId;
     private Integer quantity;
     private String batchNumber;
     private String expiryDate;
