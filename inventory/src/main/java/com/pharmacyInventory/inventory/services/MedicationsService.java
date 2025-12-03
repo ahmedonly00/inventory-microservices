@@ -50,7 +50,12 @@ public class MedicationsService {
             throw new RuntimeException("Medication with name '" + medicationDTO.getName() + "' already exists");
         }
 
+        if(medicationDTO.getBranchId() == null || medicationDTO.getBranchId().isEmpty()) {
+            throw new RuntimeException("Branch ID is required");
+        }
+
         Medications medication = medicationsMapper.toMedications(medicationDTO);
+        medication.setBranchId(medicationDTO.getBranchId());
         medication.setCreatedAt(LocalDateTime.now());
         medication.setUpdatedAt(LocalDateTime.now());
         medication.setIsActive(true);
