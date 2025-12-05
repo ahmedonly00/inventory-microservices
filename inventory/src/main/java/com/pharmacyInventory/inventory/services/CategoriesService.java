@@ -26,6 +26,12 @@ public class CategoriesService {
         return categoriesMapper.toCategoriesDTO(categories);
     }
 
+    public List<CategoriesDTO> getAllForms() {
+        log.info("Fetching all forms");
+        List<Categories> forms = categoriesRepository.findByType(CategoryType.FORM);
+        return categoriesMapper.toCategoriesDTO(forms);
+    }
+
     public CategoriesDTO createCategory(CategoriesDTO categoryDTO) {
         log.info("Creating new category: {}", categoryDTO.getName());
         

@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,18 +26,15 @@ public class CategoriesController {
         return ResponseEntity.ok(categories);
     }
 
-    @PostMapping(value = "/createCategory")
-    public ResponseEntity<?> createCategory(@Valid @RequestBody CategoriesDTO categoryDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            String errorMessage = "Invalid request";
-            var fieldError = bindingResult.getFieldError();
-            if (fieldError != null && fieldError.getDefaultMessage() != null) {
-                errorMessage = fieldError.getDefaultMessage();
-            }
-            log.warn("Validation errors in create category request: {}", bindingResult.getAllErrors());
-            return ResponseEntity.badRequest().body(errorMessage);
-        }
+    @GetMapping(value = "/getAllForms")
+    public ResponseEntity<List<CategoriesDTO>> getAllForms() {
+        log.info("Fetching all forms");
+        List<CategoriesDTO> forms = categoriesService.getAllForms();
+        return ResponseEntity.ok(forms);
+    }
 
+    @PostMapping(value = "/createCategory")
+    public ResponseEntity<?> createCategory(@Valid @RequestBody CategoriesDTO categoryDTO) {
         try {
             CategoriesDTO created = categoriesService.createCategory(categoryDTO);
             log.info("Created new category with id: {}", created.getId());
@@ -50,17 +46,7 @@ public class CategoriesController {
     }
 
     @PutMapping(value = "/updateCategory/{id}")
-    public ResponseEntity<?> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoriesDTO categoryDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            String errorMessage = "Invalid request";
-            var fieldError = bindingResult.getFieldError();
-            if (fieldError != null && fieldError.getDefaultMessage() != null) {
-                errorMessage = fieldError.getDefaultMessage();
-            }
-            log.warn("Validation errors in update category request: {}", bindingResult.getAllErrors());
-            return ResponseEntity.badRequest().body(errorMessage);
-        }
-
+    public ResponseEntity<?> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoriesDTO categoryDTO) {
         try {
             CategoriesDTO updated = categoriesService.updateCategory(id, categoryDTO);
             log.info("Updated category with id: {}", id);

@@ -50,8 +50,6 @@ public class Equivalents {
     @Column(nullable = false)
     private List<String> brandNames;
 
-    @Column(nullable = false)
-    private String source;
     
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
