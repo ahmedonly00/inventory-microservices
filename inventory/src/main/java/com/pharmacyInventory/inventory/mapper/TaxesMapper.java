@@ -28,13 +28,12 @@ public class TaxesMapper {
                 .id(tax.getId())
                 .branchId(tax.getBranchId())
                 .name(tax.getName())
+                .taxCode(tax.getTaxCode())
                 .rate(tax.getRate())
                 .isActive(tax.getIsActive())
                 .description(tax.getDescription())
                 .createdAt(tax.getCreatedAt())
                 .updatedAt(tax.getUpdatedAt())
-                .salesIds(tax.getSales() != null ? 
-                    tax.getSales().stream().map(s -> s.getId()).collect(Collectors.toList()) : null)
                 .build();
     }
 
@@ -47,6 +46,7 @@ public class TaxesMapper {
         tax.setId(taxesDTO.getId());
         tax.setBranchId(taxesDTO.getBranchId());
         tax.setName(taxesDTO.getName());
+        tax.setTaxCode(taxesDTO.getTaxCode());
         tax.setRate(taxesDTO.getRate());
         tax.setIsActive(taxesDTO.getIsActive());
         tax.setDescription(taxesDTO.getDescription());

@@ -4,7 +4,11 @@ import com.pharmacyInventory.inventory.dtos.medications.MedicationsDTO;
 import com.pharmacyInventory.inventory.mapper.MedicationsMapper;
 import com.pharmacyInventory.inventory.model.Medications;
 import com.pharmacyInventory.inventory.model.Categories;
+import com.pharmacyInventory.inventory.Enum.StockStatus;
 import com.pharmacyInventory.inventory.repository.MedicationsRepository;
+
+import jakarta.transaction.Transactional;
+
 import com.pharmacyInventory.inventory.repository.CategoriesRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,20 +33,20 @@ public class MedicationsService {
     private final MedicationsMapper medicationsMapper;
     private final CategoriesRepository categoriesRepository;
 
-    public List<MedicationsDTO> getAllMedications() {
+    public List<MedicationsDTO> getAllMedications( String branchId) {
         log.info("Fetching all medications");
-        List<Medications> medications = medicationsRepository.findAll();
+        List<Medications> medications = medicationsRepository.findAllByBranchId(branchId);
         return medicationsMapper.toMedicationsDTO(medications);
     }
 
-    public MedicationsDTO getMedicationById(Long id) {
-        log.info("Fetching medication with id: {}", id);
-        Medications medication = medicationsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Medication not found with id: " + id));
+    public MedicationsDTO getMedicationById(Long medicationId, String branchId) {
+        log.info("Fetching medication with id: {}", medicationId);
+        Medications medication = medicationsRepository.findByMedicationIdAndBranchId(medicationId, branchId)
+                .orElseThrow(() -> new RuntimeException("Medication not found with id: " + medicationId));
         return medicationsMapper.toMedicationsDTO(medication);
     }
 
-    public MedicationsDTO createMedication(MedicationsDTO medicationDTO) {
+    public MedicationsDTO createMedication(MedicationsDTO medicationDTO, String branchId) {
         log.info("Creating new medication: {}", medicationDTO.getName());
         
         // Check if medication with same name already exists
@@ -50,26 +54,26 @@ public class MedicationsService {
             throw new RuntimeException("Medication with name '" + medicationDTO.getName() + "' already exists");
         }
 
-        if(medicationDTO.getBranchId() == null || medicationDTO.getBranchId().isEmpty()) {
+        if(branchId == null || branchId.isEmpty()) {
             throw new RuntimeException("Branch ID is required");
         }
 
         Medications medication = medicationsMapper.toMedications(medicationDTO);
-        medication.setBranchId(medicationDTO.getBranchId());
+        medication.setBranchId(branchId);   
         medication.setCreatedAt(LocalDateTime.now());
         medication.setUpdatedAt(LocalDateTime.now());
-        medication.setIsActive(true);
+        medication.setStockStatus(StockStatus.IN_STOCK);
 
         Medications saved = medicationsRepository.save(medication);
         log.info("Created medication with id: {}", saved.getMedicationId());
         return medicationsMapper.toMedicationsDTO(saved);
     }
 
-    public MedicationsDTO updateMedication(Long id, MedicationsDTO medicationDTO) {
-        log.info("Updating medication with id: {}", id);
+    public MedicationsDTO updateMedication(Long medicationId, MedicationsDTO medicationDTO, String branchId) {
+        log.info("Updating medication with id: {}", medicationId);
         
-        Medications existing = medicationsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Medication not found with id: " + id));
+        Medications existing = medicationsRepository.findByMedicationIdAndBranchId(medicationId, branchId)
+                .orElseThrow(() -> new RuntimeException("Medication not found with id: " + medicationId));
 
         // Update fields
         existing.setName(medicationDTO.getName());
@@ -90,41 +94,85 @@ public class MedicationsService {
         existing.setUpdatedAt(LocalDateTime.now());
 
         Medications updated = medicationsRepository.save(existing);
-        log.info("Updated medication with id: {}", id);
+        log.info("Updated medication with id: {}", medicationId);
         return medicationsMapper.toMedicationsDTO(updated);
     }
 
-    public void deleteMedication(Long id) {
-        log.info("Deleting medication with id: {}", id);
+    public void deleteMedication(Long medicationId, String branchId) {
+        log.info("Deleting medication with id: {}", medicationId);
         
-        Medications medication = medicationsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Medication not found with id: " + id));
+        Medications medication = medicationsRepository.findByMedicationIdAndBranchId(medicationId, branchId)
+                .orElseThrow(() -> new RuntimeException("Medication not found with id: " + medicationId));
 
         medicationsRepository.delete(medication);
-        log.info("Deleted medication with id: {}", id);
+        log.info("Deleted medication with id: {}", medicationId);
     }
 
-    public void addStock(Long id, Integer quantity) {
-        log.info("Adding {} units of stock to medication id: {}", quantity, id);
+    public void addStock(Long medicationId, Integer quantity, String branchId) {
+        log.info("Adding {} units of stock to medication id: {}", quantity, medicationId);
         
-        Medications medication = medicationsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Medication not found with id: " + id));
+        Medications medication = medicationsRepository.findByMedicationIdAndBranchId(medicationId, branchId)
+                .orElseThrow(() -> new RuntimeException("Medication not found with id: " + medicationId));
 
         medication.setStockQuantity(medication.getStockQuantity() + quantity);
         medication.setUpdatedAt(LocalDateTime.now());
 
         medicationsRepository.save(medication);
-        log.info("Added {} units of stock to medication id: {}", quantity, id);
+        log.info("Added {} units of stock to medication id: {}", quantity, medicationId);
     }
 
-    public List<MedicationsDTO> searchMedications(String query) {
+    public List<MedicationsDTO> searchMedications(String query, String branchId) {
         log.info("Searching medications with query: {}", query);
         
-        List<Medications> medications = medicationsRepository.findByNameContainingIgnoreCase(query);
+        List<Medications> medications = medicationsRepository.findByNameContainingIgnoreCaseAndBranchId(query, branchId);
         return medicationsMapper.toMedicationsDTO(medications);
     }
 
-    public List<MedicationsDTO> uploadInventory(MultipartFile file) throws IOException {
+    public List<MedicationsDTO> filterMedicationsByCategory(Long categoryId, String branchId) {
+        log.info("Filtering medications by category id: {}", categoryId);
+        
+        List<Medications> medications = medicationsRepository.findByCategoryIdAndBranchId(categoryId, branchId);
+        return medicationsMapper.toMedicationsDTO(medications);
+    }
+
+    public List<MedicationsDTO> filterMedicationsByStatus(StockStatus stockStatus, String branchId) {
+        log.info("Filtering medications by status: {}", stockStatus);
+        
+        List<Medications> medications = medicationsRepository.findByStockStatusAndBranchId(stockStatus, branchId);
+        return medicationsMapper.toMedicationsDTO(medications);
+    }
+
+    @Transactional
+    public void updateStockStatus(Long medicationId, String branchId) {
+        Medications medication = medicationsRepository.findByMedicationIdAndBranchId(medicationId, branchId)
+                .orElseThrow(() -> new RuntimeException("Medication not found"));
+        
+        if (medication.getStockQuantity() <= 0) {
+            medication.setStockStatus(StockStatus.OUT_OF_STOCK);
+        } else if (medication.getStockQuantity() <= medication.getReorderLevel()) {
+            medication.setStockStatus(StockStatus.LOW_STOCK);
+        } else {
+            medication.setStockStatus(StockStatus.IN_STOCK);
+        }
+        
+        medicationsRepository.save(medication);
+    }
+
+    @Transactional
+    public MedicationsDTO updateStockQuantity(Long medicationId, Integer quantity, String branchId) {
+        Medications medication = medicationsRepository.findByMedicationIdAndBranchId(medicationId, branchId)
+                .orElseThrow(() -> new RuntimeException("Medication not found"));
+        
+        medication.setStockQuantity(quantity);
+        medicationsRepository.save(medication);
+        
+        // Update the stock status
+        updateStockStatus(medicationId, branchId);
+        
+        return medicationsMapper.toMedicationsDTO(medication);
+    }
+
+    public List<MedicationsDTO> uploadInventory(MultipartFile file, String branchId) throws IOException {
         log.info("Uploading inventory from file: {}", file.getOriginalFilename());
         
         List<MedicationsDTO> medications = new ArrayList<>();
@@ -144,10 +192,13 @@ public class MedicationsService {
                             .price(getFloatValue(row.getCell(5)))
                             .batchNumber(getCellValue(row.getCell(6)))
                             .expiryDate(getLocalDateValue(row.getCell(7)))
-                            .isActive(true)
                             .build();
 
-                    medications.add(createMedication(medication));
+                    medication.setBranchId(branchId);
+                    medication.setCreatedAt(LocalDateTime.now());
+                    medication.setUpdatedAt(LocalDateTime.now());
+                    medication.setStockStatus(StockStatus.IN_STOCK);
+                    medications.add(createMedication(medication, branchId));
                 } catch (Exception e) {
                     log.warn("Error processing row {}: {}", i + 1, e.getMessage());
                 }
@@ -167,7 +218,7 @@ public class MedicationsService {
 
         // Create header row
         Row headerRow = sheet.createRow(0);
-        String[] headers = {"Name", "Form", "Strength", "Stock Quantity", "Reorder Level", "Price", "Batch Number", "Expiry Date"};
+        String[] headers = {"Medication Name", "Form", "Strength","Category","Supplier", "Stock Quantity", "Reorder Level", "Price", "Batch Number", "Expiry Date","Stock Status"};
         
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
@@ -185,6 +236,72 @@ public class MedicationsService {
 
         log.info("Generated inventory template");
         return outputStream.toByteArray();
+    }
+
+    public byte[] exportToExcel(String branchId) throws IOException {
+        log.info("Exporting inventory to Excel for branch: {}", branchId);
+        
+        // Get medications data
+        List<MedicationsDTO> medications = getAllMedications(branchId);
+        
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Medications");
+            
+            // Create header row
+            String[] headers = {
+                "ID", "Name", "Form", "Strength", "Category", "Stock Quantity", "Reorder Level","Price","Supplier" ,
+                "Batch Number", "Expiry Date", "Status"
+            };
+            
+            Row headerRow = sheet.createRow(0);
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+            }
+            
+            // Fill data rows
+            int rowNum = 1;
+            for (MedicationsDTO med : medications) {
+                Row row = sheet.createRow(rowNum++);
+                
+                row.createCell(0).setCellValue(med.getMedicationId() != null ? med.getMedicationId() : 0);
+                row.createCell(1).setCellValue(med.getName() != null ? med.getName() : "");
+                row.createCell(2).setCellValue(med.getFormName() != null ? med.getFormName() : "");
+                row.createCell(3).setCellValue(med.getStrength() != null ? med.getStrength() : "");
+                row.createCell(4).setCellValue(med.getCategoryName() != null ? med.getCategoryName() : "");
+                row.createCell(5).setCellValue(med.getStockQuantity() != null ? med.getStockQuantity() : 0);
+                row.createCell(6).setCellValue(med.getReorderLevel() != null ? med.getReorderLevel() : 0);
+                row.createCell(7).setCellValue(med.getPrice() != null ? med.getPrice() : 0.0);
+                row.createCell(8).setCellValue(med.getSupplierName() != null ? med.getSupplierName() : "");
+                row.createCell(9).setCellValue(med.getBatchNumber() != null ? med.getBatchNumber() : "");
+                
+                // Format date  
+                if (med.getExpiryDate() != null) {
+                    Cell dateCell = row.createCell(6);
+                    dateCell.setCellValue(med.getExpiryDate());
+                    CellStyle dateCellStyle = workbook.createCellStyle();
+                    dateCellStyle.setDataFormat(workbook.getCreationHelper()
+                        .createDataFormat()
+                        .getFormat("dd/MM/yyyy"));
+                    dateCell.setCellStyle(dateCellStyle);
+                } else {
+                    row.createCell(6).setCellValue("");
+                }
+                
+                row.createCell(7).setCellValue(med.getDescription() != null ? med.getDescription() : "");
+                row.createCell(8).setCellValue(med.getStockStatus() != null ? med.getStockStatus().name() : "");
+            }
+            
+            // Auto-size columns
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+            
+            // Write to byte array
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            workbook.write(outputStream);
+            return outputStream.toByteArray();
+        }
     }
 
     private String getCellValue(Cell cell) {

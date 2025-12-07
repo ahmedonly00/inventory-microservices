@@ -7,6 +7,7 @@ import lombok.Builder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import jakarta.validation.constraints.NotNull;
+import com.pharmacyInventory.inventory.Enum.StockStatus;
 
 @Data
 @NoArgsConstructor
@@ -23,7 +24,8 @@ public class MedicationsDTO {
     private Float price;
     private String batchNumber;
     private LocalDate expiryDate;
-    private Boolean isActive;
+    private String description;
+    private StockStatus stockStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Long addedById;

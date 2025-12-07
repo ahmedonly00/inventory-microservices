@@ -30,6 +30,9 @@ public class Taxes {
     
     @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
+    private String taxCode;
     
     @Column(nullable = false)
     private Float rate;

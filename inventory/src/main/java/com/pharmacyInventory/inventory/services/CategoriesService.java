@@ -20,19 +20,19 @@ public class CategoriesService {
     private final CategoriesRepository categoriesRepository;
     private final CategoriesMapper categoriesMapper;
 
-    public List<CategoriesDTO> getAllCategories() {
+    public List<CategoriesDTO> getAllCategories(String branchId) {
         log.info("Fetching all categories");
-        List<Categories> categories = categoriesRepository.findAll();
+        List<Categories> categories = categoriesRepository.findByBranchId(branchId);
         return categoriesMapper.toCategoriesDTO(categories);
     }
 
-    public List<CategoriesDTO> getAllForms() {
+    public List<CategoriesDTO> getAllForms(String branchId) {
         log.info("Fetching all forms");
-        List<Categories> forms = categoriesRepository.findByType(CategoryType.FORM);
+        List<Categories> forms = categoriesRepository.findByType(CategoryType.FORM, branchId);
         return categoriesMapper.toCategoriesDTO(forms);
     }
 
-    public CategoriesDTO createCategory(CategoriesDTO categoryDTO) {
+    public CategoriesDTO createCategory(CategoriesDTO categoryDTO, String branchId) {
         log.info("Creating new category: {}", categoryDTO.getName());
         
         // Check if category with same name already exists
@@ -45,15 +45,16 @@ public class CategoriesService {
         category.setUpdatedAt(LocalDateTime.now());
         category.setIsActive(true);
 
+        category.setBranchId(branchId);
         Categories saved = categoriesRepository.save(category);
         log.info("Created category with id: {}", saved.getId());
         return categoriesMapper.toCategoriesDTO(saved);
     }
 
-    public CategoriesDTO updateCategory(Long id, CategoriesDTO categoryDTO) {
+    public CategoriesDTO updateCategory(Long id, CategoriesDTO categoryDTO, String branchId) {
         log.info("Updating category with id: {}", id);
         
-        Categories existing = categoriesRepository.findById(id)
+        Categories existing = categoriesRepository.findByIdAndBranchId(id, branchId)
                 .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
 
         // Update fields
@@ -63,15 +64,16 @@ public class CategoriesService {
         existing.setDescription(categoryDTO.getDescription());
         existing.setUpdatedAt(LocalDateTime.now());
 
+        existing.setBranchId(branchId);
         Categories updated = categoriesRepository.save(existing);
         log.info("Updated category with id: {}", id);
         return categoriesMapper.toCategoriesDTO(updated);
     }
 
-    public void deactivateCategory(Long id) {
+    public void deactivateCategory(Long id, String branchId) {
         log.info("Deactivating category with id: {}", id);
         
-        Categories category = categoriesRepository.findById(id)
+        Categories category = categoriesRepository.findByIdAndBranchId(id, branchId)
                 .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
 
         category.setIsActive(false);
@@ -81,19 +83,19 @@ public class CategoriesService {
         log.info("Deactivated category with id: {}", id);
     }
 
-    public void deleteCategory(Long id) {
+    public void deleteCategory(Long id, String branchId) {
         log.info("Deleting category with id: {}", id);
         
-        Categories category = categoriesRepository.findById(id)
+        Categories category = categoriesRepository.findByIdAndBranchId(id, branchId)
                 .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
 
         categoriesRepository.delete(category);
         log.info("Deleted category with id: {}", id);
     }
     
-    public List<CategoriesDTO> getCategoriesByType(CategoryType type) {
+    public List<CategoriesDTO> getCategoriesByType(CategoryType type, String branchId) {
         log.info("Fetching categories of type: {}", type);
-        List<Categories> categories = categoriesRepository.findByType(type);
+        List<Categories> categories = categoriesRepository.findByType(type, branchId);
         return categoriesMapper.toCategoriesDTO(categories);
     }
 }

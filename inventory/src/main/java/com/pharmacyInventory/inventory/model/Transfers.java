@@ -30,37 +30,25 @@ public class Transfers {
     private Long id;
 
     @Column(name = "from_branch_id",nullable = false)
-    private Long fromBranchId;
+    private String branchId;
 
     @Column(name = "to_branch_id",nullable = false)
-    private Long toBranchId;
+    private String toBranchId;
     
     @Column(name = "quantity",nullable = false)
     private Integer quantity;
 
-    @Column(name = "transfer_date", nullable = false)
-    private LocalDateTime transferDate;
-
-    @Column(name = "received_date", nullable = false)
-    private LocalDateTime receivedDate;
-    
     @Column(name = "status", nullable = false)
     private String status;
     
-    @Column(name = "from_location")
-    private String fromLocation;
-    
-    @Column(name = "to_location")
-    private String toLocation;
-    
     @Column(name = "notes")
     private String notes;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    
-    @Column(name = "is_active")
-    private Boolean isActive;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medication_id", nullable = false)
@@ -68,12 +56,11 @@ public class Transfers {
 
     @PrePersist
     protected void onCreate() {
-        transferDate = LocalDateTime.now();
+        createdAt = LocalDateTime.now();
     }
     
     @PreUpdate
     protected void onUpdate() {
-        receivedDate = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
  

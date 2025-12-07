@@ -159,9 +159,9 @@ public class EquivalentsService {
         return equivalentsMapper.toEquivalentsDTO(equivalents);
     }
 
-    public List<EquivalentsDTO> filterEquivalentsByFormsAndReferenceSource(List<String> forms, List<String> referenceSources, String branchId) {
+    public List<EquivalentsDTO> filterEquivalentsByFormsOrReferenceSource(List<String> forms, List<String> referenceSources, String branchId) {
         log.info("Filtering equivalents by forms: {} and reference sources: {} for branch: {}", forms, referenceSources, branchId);
-        List<Equivalents> equivalents = equivalentsRepository.findByFormInAndReferenceSourceNameInAndBranchId(forms, referenceSources, branchId);
+        List<Equivalents> equivalents = equivalentsRepository.findByFormInOrReferenceSourceNameInAndBranchId(forms, referenceSources, branchId);
         return equivalentsMapper.toEquivalentsDTO(equivalents);
     }
 

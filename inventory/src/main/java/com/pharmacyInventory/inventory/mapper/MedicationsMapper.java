@@ -42,7 +42,8 @@ public class MedicationsMapper {
                 .price(medication.getPrice())
                 .batchNumber(medication.getBatchNumber())
                 .expiryDate(medication.getExpiryDate())
-                .isActive(medication.getIsActive())
+                .description(medication.getDescription())
+                .stockStatus(medication.getStockStatus())
                 .createdAt(medication.getCreatedAt())
                 .updatedAt(medication.getUpdatedAt())
                 .branchId(medication.getBranchId())
@@ -86,7 +87,8 @@ public class MedicationsMapper {
         medication.setPrice(medicationsDTO.getPrice());
         medication.setBatchNumber(medicationsDTO.getBatchNumber());
         medication.setExpiryDate(medicationsDTO.getExpiryDate());
-        medication.setIsActive(medicationsDTO.getIsActive());
+        medication.setDescription(medicationsDTO.getDescription());
+        medication.setStockStatus(medicationsDTO.getStockStatus());
         medication.setCreatedAt(medicationsDTO.getCreatedAt());
         medication.setUpdatedAt(medicationsDTO.getUpdatedAt());
                 

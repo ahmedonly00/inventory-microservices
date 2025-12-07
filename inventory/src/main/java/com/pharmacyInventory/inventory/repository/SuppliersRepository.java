@@ -34,12 +34,10 @@ public interface SuppliersRepository extends JpaRepository<Suppliers, Long> {
         
     boolean existsByEmailAndBranchId(String email, String branchId);
 
-    List<Suppliers> searchByNameOrEmailOrPhone(String query, String branchId);
+    List<Suppliers> searchByNameOrEmail(String query, String branchId);
     
-    boolean existsByPhoneNumberAndBranchId(String phoneNumber, String branchId);
-    
-    boolean existsByTaxNumberAndBranchId(String taxNumber, String branchId);
-    
+    boolean existsByPhoneAndBranchId(String phoneNumber, String branchId);
+        
     void deleteByIdAndBranchId(Long id, String branchId);
     
     boolean existsByIdAndBranchId(Long id, String branchId);

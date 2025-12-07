@@ -95,11 +95,11 @@ public class EquivalentsController {
     }
 
     @GetMapping("/filter/byBranch/{branchId}")
-    public ResponseEntity<List<EquivalentsDTO>> filterEquivalentsByFormsAndReferenceSource(
+    public ResponseEntity<List<EquivalentsDTO>> filterEquivalentsByFormsOrReferenceSource(
             @PathVariable String branchId,
             @RequestParam(required = false) List<String> forms,
             @RequestParam(required = false) List<String> referenceSources) {
-        List<EquivalentsDTO> equivalents = equivalentsService.filterEquivalentsByFormsAndReferenceSource(
+        List<EquivalentsDTO> equivalents = equivalentsService.filterEquivalentsByFormsOrReferenceSource(
             forms, 
             referenceSources, 
             branchId

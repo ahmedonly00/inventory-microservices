@@ -5,8 +5,10 @@ import com.pharmacyInventory.inventory.services.TransfersService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,33 +23,23 @@ public class TransfersController {
     private final TransfersService transfersService;
 
     @GetMapping
-    public ResponseEntity<List<TransfersDTO>> getAllTransfers() {
+    public ResponseEntity<List<TransfersDTO>> getAllTransfers(String branchId) {
         log.info("Fetching all transfers");
-        List<TransfersDTO> transfers = transfersService.getAllTransfers();
+        List<TransfersDTO> transfers = transfersService.getAllTransfers(branchId);
         return ResponseEntity.ok(transfers);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<TransfersDTO> getTransferById(@PathVariable Long id) {
+    @GetMapping("/{id}/{branchId}")
+    public ResponseEntity<TransfersDTO> getTransferById(@PathVariable Long id, @PathVariable String branchId) {
         log.info("Fetching transfer with id: {}", id);
-        TransfersDTO transfer = transfersService.getTransferById(id);
+        TransfersDTO transfer = transfersService.getTransferById(id, branchId);
         return ResponseEntity.ok(transfer);
     }
 
-    @PostMapping
-    public ResponseEntity<?> createTransfer(@Valid @RequestBody TransfersDTO transferDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            String errorMessage = "Invalid request";
-            var fieldError = bindingResult.getFieldError();
-            if (fieldError != null && fieldError.getDefaultMessage() != null) {
-                errorMessage = fieldError.getDefaultMessage();
-            }
-            log.warn("Validation errors in create transfer request: {}", bindingResult.getAllErrors());
-            return ResponseEntity.badRequest().body(errorMessage);
-        }
-
+    @PostMapping(value = "/{branchId}")
+    public ResponseEntity<?> createTransfer(@Valid @RequestBody TransfersDTO transferDTO, @PathVariable String branchId) {
         try {
-            TransfersDTO created = transfersService.createTransfer(transferDTO);
+            TransfersDTO created = transfersService.createTransfer(transferDTO, branchId);
             log.info("Created new transfer with id: {}", created.getId());
             return ResponseEntity.ok(created);
         } catch (Exception e) {
@@ -56,10 +48,10 @@ public class TransfersController {
         }
     }
 
-    @PutMapping("/{id}/status")
-    public ResponseEntity<?> updateTransferStatus(@PathVariable Long id, @RequestParam String status) {
+    @PutMapping("/{id}/status/{branchId}")
+    public ResponseEntity<?> updateTransferStatus(@PathVariable Long id, @RequestParam String status, TransfersDTO transferDTO,@PathVariable String branchId) {
         try {
-            TransfersDTO updated = transfersService.updateTransferStatus(id, status);
+            TransfersDTO updated = transfersService.updateTransferStatus(id, status, transferDTO, branchId);
             log.info("Updated status for transfer with id: {} to {}", id, status);
             return ResponseEntity.ok(updated);
         } catch (Exception e) {
@@ -68,10 +60,17 @@ public class TransfersController {
         }
     }
 
-    @GetMapping("/branch/{branchId}")
-    public ResponseEntity<List<TransfersDTO>> getTransfersByBranch(@PathVariable Long branchId) {
+    @GetMapping("/branch/{branchId}/{toBranchId}")
+    public ResponseEntity<List<TransfersDTO>> getTransfersByBranch(@PathVariable String branchId, @PathVariable String toBranchId) {
         log.info("Fetching transfers for branch with id: {}", branchId);
-        List<TransfersDTO> transfers = transfersService.getTransfersByBranch(branchId);
+        List<TransfersDTO> transfers = transfersService.getTransfersByBranch(branchId, toBranchId);
+        return ResponseEntity.ok(transfers);
+    }
+
+    @GetMapping("/filter/{branchId}")
+    public ResponseEntity<Page<TransfersDTO>> filterByBranchId(@PathVariable String branchId, Pageable pageable) {
+        log.info("Fetching transfers for branch with id: {}", branchId);
+        Page<TransfersDTO> transfers = transfersService.filterByBranchId(branchId, pageable);
         return ResponseEntity.ok(transfers);
     }
 }

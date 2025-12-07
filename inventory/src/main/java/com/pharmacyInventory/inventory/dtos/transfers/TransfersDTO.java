@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 @Builder
 public class TransfersDTO {
     private Long id;
-    private Long fromBranchId;
-    private Long toBranchId;
+    private String branchId;
+    private String toBranchId;
     private Integer quantity;
     private LocalDateTime transferDate;
     private LocalDateTime receivedDate;

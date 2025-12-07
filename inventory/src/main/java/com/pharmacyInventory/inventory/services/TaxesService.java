@@ -20,11 +20,11 @@ public class TaxesService {
     private final TaxesRepository taxesRepository;
     private final TaxesMapper taxesMapper;
 
-    public List<TaxesDTO> getAllTaxes() {
+    public List<TaxesDTO> getAllTaxes(String branchId) {
         log.info("Fetching all taxes");
         
         try {
-            List<Taxes> taxes = taxesRepository.findAll();
+            List<Taxes> taxes = taxesRepository.findAllByBranchId(branchId);
             log.info("Retrieved {} taxes", taxes.size());
             return taxesMapper.toTaxesDTO(taxes);
             
@@ -34,11 +34,11 @@ public class TaxesService {
         }
     }
 
-    public TaxesDTO getTaxById(@NonNull Long id) {
+    public TaxesDTO getTaxById(@NonNull Long id, String branchId) {
         log.info("Fetching tax with id: {}", id);
         
         try {
-            Taxes tax = taxesRepository.findById(id)
+            Taxes tax = taxesRepository.findByIdAndBranchId(id, branchId)
                     .orElseThrow(() -> new RuntimeException("Tax not found with id: " + id));
             
             log.info("Found tax with id: {}", id);
@@ -75,11 +75,11 @@ public class TaxesService {
         }
     }
 
-    public TaxesDTO updateTax(@NonNull Long id, @NonNull TaxesDTO taxDTO) {
+    public TaxesDTO updateTax(@NonNull Long id, @NonNull TaxesDTO taxDTO, String branchId) {
         log.info("Updating tax with id: {}", id);
         
         try {
-            Taxes existingTax = taxesRepository.findById(id)
+            Taxes existingTax = taxesRepository.findByIdAndBranchId(id, branchId)
                     .orElseThrow(() -> new RuntimeException("Tax not found with id: " + id));
 
             // Update fields
@@ -114,11 +114,11 @@ public class TaxesService {
         }
     }
 
-    public TaxesDTO activateTax(@NonNull Long id) {
+    public TaxesDTO activateTax(@NonNull Long id, String branchId) {
         log.info("Activating tax with id: {}", id);
         
         try {
-            Taxes tax = taxesRepository.findById(id)
+            Taxes tax = taxesRepository.findByIdAndBranchId(id, branchId)
                     .orElseThrow(() -> new RuntimeException("Tax not found with id: " + id));
             
             tax.setIsActive(true);
@@ -134,11 +134,11 @@ public class TaxesService {
         }
     }
 
-    public TaxesDTO deactivateTax(@NonNull Long id) {
+    public TaxesDTO deactivateTax(@NonNull Long id, String branchId) {
         log.info("Deactivating tax with id: {}", id);
         
         try {
-            Taxes tax = taxesRepository.findById(id)
+            Taxes tax = taxesRepository.findByIdAndBranchId(id, branchId)
                     .orElseThrow(() -> new RuntimeException("Tax not found with id: " + id));
             
             tax.setIsActive(false);
@@ -154,11 +154,11 @@ public class TaxesService {
         }
     }
 
-    public void deleteTax(@NonNull Long id) {
+    public void deleteTax(@NonNull Long id, String branchId) {
         log.info("Deleting tax with id: {}", id);
         
         try {
-            if (!taxesRepository.existsById(id)) {
+            if (!taxesRepository.existsByIdAndBranchId(id, branchId)) {
                 throw new RuntimeException("Tax not found with id: " + id);
             }
             
@@ -171,11 +171,11 @@ public class TaxesService {
         }
     }
 
-    public List<TaxesDTO> getActiveTaxes() {
+    public List<TaxesDTO> getActiveTaxes(String branchId) {
         log.info("Fetching active taxes only");
         
         try {
-            List<Taxes> activeTaxes = taxesRepository.findByIsActive(true);
+            List<Taxes> activeTaxes = taxesRepository.findByIsActiveAndBranchId(true, branchId);
             log.info("Retrieved {} active taxes", activeTaxes.size());
             return taxesMapper.toTaxesDTO(activeTaxes);
             

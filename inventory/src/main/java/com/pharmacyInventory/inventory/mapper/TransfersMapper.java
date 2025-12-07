@@ -26,14 +26,10 @@ public class TransfersMapper {
 
         return TransfersDTO.builder()
                 .id(transfer.getId())
-                .fromBranchId(transfer.getFromBranchId())
+                .branchId(transfer.getBranchId())
                 .toBranchId(transfer.getToBranchId())
                 .quantity(transfer.getQuantity())
-                .transferDate(transfer.getTransferDate())
-                .receivedDate(transfer.getReceivedDate())
                 .status(transfer.getStatus())
-                .fromLocation(transfer.getFromLocation())
-                .toLocation(transfer.getToLocation())
                 .notes(transfer.getNotes())
                 .medicationId(transfer.getMedication() != null ? transfer.getMedication().getMedicationId() : null)
                 .medicationName(transfer.getMedication() != null ? transfer.getMedication().getName() : null)
@@ -47,14 +43,10 @@ public class TransfersMapper {
 
         Transfers transfer = new Transfers();
         transfer.setId(transfersDTO.getId());
-        transfer.setFromBranchId(transfersDTO.getFromBranchId());
+        transfer.setBranchId(transfersDTO.getBranchId());
         transfer.setToBranchId(transfersDTO.getToBranchId());
         transfer.setQuantity(transfersDTO.getQuantity());
-        transfer.setTransferDate(transfersDTO.getTransferDate());
-        transfer.setReceivedDate(transfersDTO.getReceivedDate());
         transfer.setStatus(transfersDTO.getStatus());
-        transfer.setFromLocation(transfersDTO.getFromLocation());
-        transfer.setToLocation(transfersDTO.getToLocation());
         transfer.setNotes(transfersDTO.getNotes());
                 
         return transfer;

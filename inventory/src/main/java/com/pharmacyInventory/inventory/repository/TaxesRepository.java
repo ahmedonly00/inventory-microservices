@@ -12,4 +12,8 @@ import java.util.Optional;
 public interface TaxesRepository extends JpaRepository<Taxes, Long> {
     List<Taxes> findByIsActive(@NonNull Boolean isActive);
     Optional<Taxes> findByName(@NonNull String name);
+    List<Taxes> findAllByBranchId(@NonNull String branchId);
+    Optional<Taxes> findByIdAndBranchId(@NonNull Long id, @NonNull String branchId);
+    boolean existsByIdAndBranchId(@NonNull Long id, @NonNull String branchId);
+    List<Taxes> findByIsActiveAndBranchId(@NonNull Boolean isActive, @NonNull String branchId);
 }

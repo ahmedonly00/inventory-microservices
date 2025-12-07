@@ -22,11 +22,11 @@ public class TaxesController {
 
     private final TaxesService taxesService;
 
-    @GetMapping(value="/getAllTaxes")
-    public ResponseEntity<List<TaxesDTO>> getAllTaxes() {
+    @GetMapping(value="/getAllTaxes/{branchId}")
+    public ResponseEntity<List<TaxesDTO>> getAllTaxes(@PathVariable String branchId) {
         log.info("Fetching all taxes");
         try {
-            List<TaxesDTO> taxes = taxesService.getAllTaxes();
+            List<TaxesDTO> taxes = taxesService.getAllTaxes(branchId);
             return ResponseEntity.ok(taxes);
         } catch (Exception e) {
             log.error("Error fetching all taxes", e);
@@ -34,11 +34,11 @@ public class TaxesController {
         }
     }
 
-    @GetMapping(value="/getTaxById/{id}")
-    public ResponseEntity<TaxesDTO> getTaxById(@NonNull @PathVariable Long id) {
+    @GetMapping(value="/getTaxById/{id}/{branchId}")
+    public ResponseEntity<TaxesDTO> getTaxById(@NonNull @PathVariable Long id, @NonNull @PathVariable String branchId) {
         log.info("Fetching tax with id: {}", id);
         try {
-            TaxesDTO tax = taxesService.getTaxById(id);
+            TaxesDTO tax = taxesService.getTaxById(id, branchId);
             return ResponseEntity.ok(tax);
         } catch (Exception e) {
             log.error("Error fetching tax with id: {}", id, e);
@@ -46,8 +46,8 @@ public class TaxesController {
         }
     }
 
-    @PostMapping(value="/createTax")
-    public ResponseEntity<?> createTax(@Valid @RequestBody @NonNull TaxesDTO taxDTO, BindingResult bindingResult) {
+    @PostMapping(value="/createTax/{branchId}")
+    public ResponseEntity<?> createTax(@Valid @RequestBody @NonNull TaxesDTO taxDTO, @NonNull @PathVariable String branchId, BindingResult bindingResult) {
         log.info("Creating new tax: {}", taxDTO.getName());
         
         if (bindingResult.hasErrors()) {
@@ -63,16 +63,11 @@ public class TaxesController {
         }
     }
 
-    @PutMapping(value="/updateTax/{id}")
-    public ResponseEntity<?> updateTax(@NonNull @PathVariable Long id, @Valid @RequestBody @NonNull TaxesDTO taxDTO, @NonNull BindingResult bindingResult) {
-        log.info("Updating tax with id: {}", id);
-        
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
-        }
-        
+    @PutMapping(value="/updateTax/{id}/{branchId}")
+    public ResponseEntity<?> updateTax(@NonNull @PathVariable Long id, @Valid @RequestBody @NonNull TaxesDTO taxDTO, @NonNull @PathVariable String branchId) {
+        log.info("Updating tax with id: {}", id);    
         try {
-            TaxesDTO updated = taxesService.updateTax(id, taxDTO);
+            TaxesDTO updated = taxesService.updateTax(id, taxDTO, branchId);
             return ResponseEntity.ok(updated);
         } catch (Exception e) {
             log.error("Error updating tax with id: {}", id, e);
@@ -80,11 +75,11 @@ public class TaxesController {
         }
     }
 
-    @PatchMapping(value="/activate/{id}")
-    public ResponseEntity<TaxesDTO> activateTax(@NonNull @PathVariable Long id) {
+    @PatchMapping(value="/activate/{id}/{branchId}")
+    public ResponseEntity<TaxesDTO> activateTax(@NonNull @PathVariable Long id, @NonNull @PathVariable String branchId) {
         log.info("Activating tax with id: {}", id);
         try {
-            TaxesDTO activated = taxesService.activateTax(id);
+            TaxesDTO activated = taxesService.activateTax(id, branchId);
             return ResponseEntity.ok(activated);
         } catch (Exception e) {
             log.error("Error activating tax with id: {}", id, e);
@@ -92,11 +87,11 @@ public class TaxesController {
         }
     }
 
-    @PatchMapping(value="/deactivate/{id}")
-    public ResponseEntity<TaxesDTO> deactivateTax(@NonNull @PathVariable Long id) {
+    @PatchMapping(value="/deactivate/{id}/{branchId}")
+    public ResponseEntity<TaxesDTO> deactivateTax(@NonNull @PathVariable Long id, @NonNull @PathVariable String branchId) {
         log.info("Deactivating tax with id: {}", id);
         try {
-            TaxesDTO deactivated = taxesService.deactivateTax(id);
+            TaxesDTO deactivated = taxesService.deactivateTax(id, branchId);
             return ResponseEntity.ok(deactivated);
         } catch (Exception e) {
             log.error("Error deactivating tax with id: {}", id, e);
@@ -104,11 +99,11 @@ public class TaxesController {
         }
     }
 
-    @DeleteMapping(value="/deleteTax/{id}")
-    public ResponseEntity<?> deleteTax(@NonNull @PathVariable Long id) {
+    @DeleteMapping(value="/deleteTax/{id}/{branchId}")
+    public ResponseEntity<?> deleteTax(@NonNull @PathVariable Long id, @NonNull @PathVariable String branchId) {
         log.info("Deleting tax with id: {}", id);
         try {
-            taxesService.deleteTax(id);
+            taxesService.deleteTax(id, branchId);
             Map<String, String> response = Map.of("message", "Tax deleted successfully");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -117,11 +112,11 @@ public class TaxesController {
         }
     }
 
-    @GetMapping(value="/active")
-    public ResponseEntity<List<TaxesDTO>> getActiveTaxes() {
+    @GetMapping(value="/active/{branchId}")
+    public ResponseEntity<List<TaxesDTO>> getActiveTaxes(@NonNull @PathVariable String branchId) {
         log.info("Fetching active taxes only");
         try {
-            List<TaxesDTO> activeTaxes = taxesService.getActiveTaxes();
+            List<TaxesDTO> activeTaxes = taxesService.getActiveTaxes(branchId);
             return ResponseEntity.ok(activeTaxes);
         } catch (Exception e) {
             log.error("Error fetching active taxes", e);

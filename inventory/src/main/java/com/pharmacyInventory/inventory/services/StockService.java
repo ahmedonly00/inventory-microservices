@@ -35,5 +35,4 @@ public class StockService {
         stockRepository.deleteById(id);
     }
     
-    // Add more business logic methods as needed
 }

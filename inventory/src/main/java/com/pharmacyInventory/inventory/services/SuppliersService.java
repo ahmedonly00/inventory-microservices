@@ -123,7 +123,7 @@ public class SuppliersService {
     @Transactional(readOnly = true)    
     public List<SuppliersDTO> searchSuppliers(String query, String branchId) {
         log.info("Searching suppliers with query: {} for branch: {}", query, branchId);
-        return suppliersRepository.searchByNameOrEmailOrPhone(query, branchId).stream()
+        return suppliersRepository.searchByNameOrEmail(query, branchId).stream()
                 .map(suppliersMapper::toSuppliersDTO)
                 .collect(Collectors.toList());
     }

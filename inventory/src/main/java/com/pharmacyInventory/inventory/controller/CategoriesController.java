@@ -1,5 +1,6 @@
 package com.pharmacyInventory.inventory.controller;
 
+import com.pharmacyInventory.inventory.Enum.CategoryType;
 import com.pharmacyInventory.inventory.dtos.categories.CategoriesDTO;
 import com.pharmacyInventory.inventory.services.CategoriesService;
 import jakarta.validation.Valid;
@@ -19,24 +20,24 @@ public class CategoriesController {
 
     private final CategoriesService categoriesService;
 
-    @GetMapping(value = "/getAllCategories")
-    public ResponseEntity<List<CategoriesDTO>> getAllCategories() {
+    @GetMapping(value = "/getAllCategories/{branchId}")
+    public ResponseEntity<List<CategoriesDTO>> getAllCategories(@PathVariable String branchId) {
         log.info("Fetching all categories");
-        List<CategoriesDTO> categories = categoriesService.getAllCategories();
+        List<CategoriesDTO> categories = categoriesService.getAllCategories(branchId);
         return ResponseEntity.ok(categories);
     }
 
-    @GetMapping(value = "/getAllForms")
-    public ResponseEntity<List<CategoriesDTO>> getAllForms() {
+    @GetMapping(value = "/getAllForms/{branchId}")
+    public ResponseEntity<List<CategoriesDTO>> getAllForms(@PathVariable String branchId) {
         log.info("Fetching all forms");
-        List<CategoriesDTO> forms = categoriesService.getAllForms();
+        List<CategoriesDTO> forms = categoriesService.getAllForms(branchId);
         return ResponseEntity.ok(forms);
     }
 
-    @PostMapping(value = "/createCategory")
-    public ResponseEntity<?> createCategory(@Valid @RequestBody CategoriesDTO categoryDTO) {
+    @PostMapping(value = "/createCategory/{branchId}")
+    public ResponseEntity<?> createCategory(@Valid @RequestBody CategoriesDTO categoryDTO, @PathVariable String branchId) {
         try {
-            CategoriesDTO created = categoriesService.createCategory(categoryDTO);
+            CategoriesDTO created = categoriesService.createCategory(categoryDTO, branchId);
             log.info("Created new category with id: {}", created.getId());
             return ResponseEntity.ok(created);
         } catch (Exception e) {
@@ -45,10 +46,10 @@ public class CategoriesController {
         }
     }
 
-    @PutMapping(value = "/updateCategory/{id}")
-    public ResponseEntity<?> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoriesDTO categoryDTO) {
+    @PutMapping(value = "/updateCategory/{id}/{branchId}")
+    public ResponseEntity<?> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoriesDTO categoryDTO, @PathVariable String branchId) {
         try {
-            CategoriesDTO updated = categoriesService.updateCategory(id, categoryDTO);
+            CategoriesDTO updated = categoriesService.updateCategory(id, categoryDTO, branchId);
             log.info("Updated category with id: {}", id);
             return ResponseEntity.ok(updated);
         } catch (Exception e) {
@@ -57,10 +58,10 @@ public class CategoriesController {
         }
     }
 
-    @PatchMapping(value = "/deactivateCategory/{id}")
-    public ResponseEntity<?> deactivateCategory(@PathVariable Long id) {
+    @PatchMapping(value = "/deactivateCategory/{id}/{branchId}")
+    public ResponseEntity<?> deactivateCategory(@PathVariable Long id, @PathVariable String branchId) {
         try {
-            categoriesService.deactivateCategory(id);
+            categoriesService.deactivateCategory(id, branchId);
             log.info("Deactivated category with id: {}", id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
@@ -69,15 +70,22 @@ public class CategoriesController {
         }
     }
 
-    @DeleteMapping(value = "/deleteCategory/{id}")
-    public ResponseEntity<?> deleteCategory(@PathVariable Long id) {
+    @DeleteMapping(value = "/deleteCategory/{id}/{branchId}")
+    public ResponseEntity<?> deleteCategory(@PathVariable Long id, @PathVariable String branchId) {
         try {
-            categoriesService.deleteCategory(id);
+            categoriesService.deleteCategory(id, branchId);
             log.info("Deleted category with id: {}", id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error("Error deleting category with id: {}", id, e);
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping(value = "/getCategoriesByType/{type}/{branchId}")
+    public ResponseEntity<List<CategoriesDTO>> getCategoriesByType(@PathVariable CategoryType type, @PathVariable String branchId) {
+        log.info("Fetching categories of type: {}", type);
+        List<CategoriesDTO> categories = categoriesService.getCategoriesByType(type, branchId);
+        return ResponseEntity.ok(categories);
     }
 }

@@ -11,6 +11,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -28,6 +30,7 @@ public class Categories {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "category_id", nullable = false)
     private Long id;
 
     @Column(nullable = false)
@@ -37,7 +40,8 @@ public class Categories {
     private String name;
     
     @Column(nullable = false)
-    private CategoryType type;
+    @Enumerated(EnumType.STRING)
+    private CategoryType type;  
 
     @Column(nullable = false)
     private String color;
